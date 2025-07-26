@@ -1,6 +1,3 @@
-// `https://api.unsplash.com/search/photos?query=${searchParams}&per_page=28&client_id=` +
-//         ACCESS_KEY
-
 import { useSelector } from "react-redux";
 import {
   createBrowserRouter,
@@ -9,13 +6,12 @@ import {
 } from "react-router-dom";
 
 import ProtectedRoutes from "./components/ProtectedRoutes";
-
 import MainLayout from "./layout/MainLayout";
-
 import { Home, Login, Profile, Signup, SingleImage } from "./pages";
 
 function App() {
   const { user } = useSelector((store) => store.user);
+
   const routes = createBrowserRouter([
     {
       path: "/",
@@ -34,7 +30,7 @@ function App() {
           element: <Profile />,
         },
         {
-          path: "/singleImage:id",
+          path: "/singleImage/:id",
           element: <SingleImage />,
         },
       ],
@@ -44,10 +40,11 @@ function App() {
       element: user ? <Navigate to="/" /> : <Login />,
     },
     {
-      path: "/singup",
+      path: "/signup",
       element: user ? <Navigate to="/" /> : <Signup />,
     },
   ]);
+
   return <RouterProvider router={routes} />;
 }
 
