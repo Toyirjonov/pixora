@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { register } from "../app/features/userSlice";
-import toast from "react-hot-toast";
+import { login } from "../app/features/userSlice";
+import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../firebase/config";
 
 function SignUp() {
   const dispatch = useDispatch();
@@ -20,7 +22,6 @@ function SignUp() {
     const password = formData.get("password");
     const confirmPassword = formData.get("confirmPassword");
 
-    // Trim bu yerda bosh spacelarni olbi tashlaydi
     if (!firstName.trim()) {
       newErrors.firstName = "Ismni kiriting";
     }
@@ -31,6 +32,8 @@ function SignUp() {
 
     if (!email.trim()) {
       newErrors.email = "Email manzilini kiriting";
+    } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
+      newErrors.email = "Email formati noto'g'ri";
     }
 
     if (!username.trim()) {
@@ -59,7 +62,7 @@ function SignUp() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -71,31 +74,44 @@ function SignUp() {
       return;
     }
 
-    const firstName = formData.get("firstName");
-    const lastName = formData.get("lastName");
-    const email = formData.get("email");
-    const username = formData.get("username");
+    const firstName = formData.get("firstName").trim();
+    const lastName = formData.get("lastName").trim();
+    const email = formData.get("email").trim().toLowerCase();
+    const username = formData.get("username").trim();
     const password = formData.get("password");
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+    console.log("Form data:", {
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+    });
 
-      const userData = {
-        firstName,
-        lastName,
-        email,
-        username,
-        password,
-        id: Date.now().toString(),
-      };
+    const signup = async (firstName, lastName, email, username, password) => {
+      setIsLoading(true);
+      try {
+        const req = await createUserWithEmailAndPassword(auth, email, password);
 
-      dispatch(register(userData));
-      toast.success("Ro'yxatdan o'tish muvaffaqiyatli yakunlandi!");
-    } catch (error) {
-      toast.error("Xatolik yuz berdi. Iltimos, qayta urinib ko'ring.");
-    } finally {
-      setIsLoading(false);
-    }
+        if (!req.user) {
+          throw new Error("Authentication failed");
+        }
+
+        await updateProfile(auth.currentUser, {
+          displayName: `${firstName} ${lastName}`,
+          photoURL: `https://api.dicebear.com/9.x/initials/svg?seed=${username}`,
+        });
+
+        dispatch(login(req.user));
+        toast.success(`Welcome, ${firstName}!`);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    signup(firstName, lastName, email, username, password);
   };
 
   const togglePassword = () => {
@@ -196,6 +212,7 @@ function SignUp() {
                   id="email"
                   name="email"
                   required
+                  placeholder="example@gmail.com"
                   className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent ${
                     errors.email
                       ? "border-red-500 bg-red-50"
@@ -372,7 +389,7 @@ function SignUp() {
                 disabled={isLoading}
                 className="w-full bg-black text-white py-3 rounded-md font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Joining..." : "Join"}
+                {isLoading ? "Creating account..." : "Join"}
               </button>
 
               <p className="text-xs text-gray-500 text-center leading-relaxed">

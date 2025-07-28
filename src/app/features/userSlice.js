@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
-  userdata: [{ email: "admin@gmail.com", password: "aqaqaqaq" }],
+  isAuthReady: false,
 };
 
 const userSlice = createSlice({
@@ -19,8 +19,11 @@ const userSlice = createSlice({
     logOut: (state) => {
       state.user = null;
     },
+    authReady: (state) => {
+      state.authReady = true;
+    },
   },
 });
 
-export const { logOut, login, register } = userSlice.actions;
+export const { logOut, login, register, authReady } = userSlice.actions;
 export default userSlice.reducer;

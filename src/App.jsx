@@ -8,9 +8,15 @@ import {
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import MainLayout from "./layout/MainLayout";
 import { Home, Login, Profile, Signup, SingleImage } from "./pages";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase/config";
+import { login, authReady } from "./app/features/userSlice";
+
+import { useDispatch } from "react-redux";
 
 function App() {
-  const { user } = useSelector((store) => store.user);
+  const { user, isAuthReady } = useSelector((store) => store.user);
+  const dispatch = useDispatch();
 
   const routes = createBrowserRouter([
     {
@@ -45,7 +51,12 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={routes} />;
+  onAuthStateChanged(auth, (user) => {
+    dispatch(login(user));
+    dispatch(authReady());
+  });
+
+  return <>{isAuthReady && <RouterProvider router={routes} />}</>;
 }
 
 export default App;

@@ -14,6 +14,7 @@ function Login() {
     const newErrors = {};
     const email = formData.get("email");
     const password = formData.get("password");
+    console.log({ email: email, password: password });
 
     if (!email.trim()) {
       newErrors.email = "Email manzilini kiriting";
