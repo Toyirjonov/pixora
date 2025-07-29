@@ -99,7 +99,7 @@ function SignUp() {
 
         await updateProfile(auth.currentUser, {
           displayName: `${firstName} ${lastName}`,
-          photoURL: `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=${username}`,
+          photoURL: `https://api.dicebear.com/9.x/adventurer-neutral/svg`,
         });
 
         dispatch(login(req.user));
