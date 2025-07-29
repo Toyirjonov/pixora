@@ -1,15 +1,23 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { logOut } from "../app/features/userSlice";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase/config";
 
 function Navbar() {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    dispatch(logOut());
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      // Пользователь автоматически выйдет через onAuthStateChanged в App.jsx
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Если Firebase не работает, выходим через Redux
+      dispatch(logOut());
+    }
   };
-
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

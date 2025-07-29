@@ -13,14 +13,13 @@ const userSlice = createSlice({
       state.user = payload;
     },
     register: (state, { payload }) => {
-      state.userdata.push(payload);
       state.user = payload;
     },
     logOut: (state) => {
       state.user = null;
     },
     authReady: (state) => {
-      state.authReady = true;
+      state.isAuthReady = true;
     },
   },
 });

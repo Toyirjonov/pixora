@@ -15,7 +15,7 @@ import { login, authReady } from "./app/features/userSlice";
 import { useDispatch } from "react-redux";
 
 function App() {
-  const { user, isAuthReady } = useSelector((store) => store.user);
+  const { user, isAuthReady } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const routes = createBrowserRouter([
@@ -54,6 +54,7 @@ function App() {
   onAuthStateChanged(auth, (user) => {
     dispatch(login(user));
     dispatch(authReady());
+    console.log(user);
   });
 
   return <>{isAuthReady && <RouterProvider router={routes} />}</>;
