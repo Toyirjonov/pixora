@@ -11,10 +11,9 @@ function Navbar() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      // Пользователь автоматически выйдет через onAuthStateChanged в App.jsx
     } catch (error) {
       console.error("Logout error:", error);
-      // Если Firebase не работает, выходим через Redux
+
       dispatch(logOut());
     }
   };
