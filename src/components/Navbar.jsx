@@ -1,22 +1,11 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { logOut } from "../app/features/userSlice";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase/config";
+import { useLogout } from "../hooks/useLogout";
 
 function Navbar() {
+  const { isLoading, logout } = useLogout();
   const { user } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("Logout error:", error);
-
-      dispatch(logOut());
-    }
-  };
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -135,25 +124,27 @@ function Navbar() {
                   <span className="hidden sm:inline">Profile</span>
                 </Link>
 
-                <button
-                  onClick={handleLogout}
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors px-2 sm:px-3 py-1 rounded hover:bg-gray-100"
-                >
-                  <span className="hidden sm:inline">Chiqish</span>
-                  <svg
-                    className="w-4 h-4 sm:hidden"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                {!isLoading && (
+                  <button
+                    onClick={logout}
+                    className="text-sm text-gray-600 hover:text-gray-900 transition-colors px-2 sm:px-3 py-1 rounded hover:bg-gray-100"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
-                  </svg>
-                </button>
+                    <span className="hidden sm:inline">Chiqish</span>
+                    <svg
+                      className="w-4 h-4 sm:hidden"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                  </button>
+                )}
               </>
             ) : (
               <Link

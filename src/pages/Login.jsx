@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { login } from "../app/features/userSlice";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { useLogin } from "../hooks/useLogin.js";
 
 function Login() {
-  const dispatch = useDispatch();
-  const { userdata } = useSelector((state) => state.user);
+  const { login, isLoading } = useLogin();
+
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -14,7 +13,6 @@ function Login() {
     const newErrors = {};
     const email = formData.get("email");
     const password = formData.get("password");
-    console.log({ email: email, password: password });
 
     if (!email.trim()) {
       newErrors.email = "Email manzilini kiriting";
@@ -28,7 +26,7 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
 
@@ -40,22 +38,12 @@ function Login() {
     const email = formData.get("email");
     const password = formData.get("password");
 
-    const foundUser = userdata.find(
-      (user) => user.email === email && user.password === password
-    );
-
-    if (foundUser) {
-      toast.success("Login is success");
-      dispatch(login(foundUser));
-    } else {
-      toast.error("Email yoki parol noto'g'ri!");
-    }
+    login(email, password);
   };
 
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
-
   return (
     <main>
       <div className="min-h-screen flex">
@@ -126,7 +114,6 @@ function Login() {
                     }`}
                   />
 
-                  {/* Eye icon button */}
                   <button
                     type="button"
                     onClick={togglePassword}
@@ -179,7 +166,7 @@ function Login() {
                 type="submit"
                 className="w-full py-3 rounded-md text-white font-semibold bg-gradient-to-b from-gray-800 to-black hover:from-black hover:to-gray-900 transition-colors"
               >
-                Login
+                {isLoading ? "Kirish..." : "Login"}
               </button>
             </form>
 

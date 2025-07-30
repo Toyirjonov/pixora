@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "../app/features/userSlice";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../firebase/config";
+import { useSignup } from "../hooks/useSingup.js";
 
 function SignUp() {
-  const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
+  const { signup, isLoading } = useSignup();
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -22,55 +19,38 @@ function SignUp() {
     const password = formData.get("password");
     const confirmPassword = formData.get("confirmPassword");
 
-    if (!firstName.trim()) {
-      newErrors.firstName = "Ismni kiriting";
-    }
-
-    if (!lastName.trim()) {
-      newErrors.lastName = "Familiyani kiriting";
-    }
-
+    if (!firstName.trim()) newErrors.firstName = "Ismni kiriting";
+    if (!lastName.trim()) newErrors.lastName = "Familiyani kiriting";
     if (!email.trim()) {
       newErrors.email = "Email manzilini kiriting";
-    } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Email formati noto'g'ri";
     }
-
-    if (!username.trim()) {
-      newErrors.username = "Username kiriting";
+    if (!username.trim()) newErrors.username = "Username kiriting";
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      newErrors.username = "Username noto‘g‘ri formatda";
     }
-
     if (!password.trim()) {
       newErrors.password = "Parolni kiriting";
     } else if (password.length < 8) {
       newErrors.password = "Parol kamida 8 ta belgidan iborat bo'lishi kerak!";
     }
-
     if (!confirmPassword.trim()) {
       newErrors.confirmPassword = "Parolni tasdiqlang";
     } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Parollar bir biriga mos kelmadi!";
-    }
-
-    const usernameRegex = /^[a-zA-Z0-9_]+$/;
-    if (username && !usernameRegex.test(username)) {
-      newErrors.username =
-        "Username faqat harflar, raqamlar va pastki chiziqdan iborat bo'lishi kerak!";
+      newErrors.confirmPassword = "Parollar bir xil emas!";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
     const formData = new FormData(e.target);
 
     if (!validateForm(formData)) {
       toast.error("Barcha maydonlarni to'g'ri to'ldiring!");
-      setIsLoading(false);
       return;
     }
 
@@ -80,47 +60,12 @@ function SignUp() {
     const username = formData.get("username").trim();
     const password = formData.get("password");
 
-    console.log("Form data:", {
-      firstName,
-      lastName,
-      email,
-      username,
-      password,
-    });
-
-    const signup = async (firstName, lastName, email, username, password) => {
-      setIsLoading(true);
-      try {
-        const req = await createUserWithEmailAndPassword(auth, email, password);
-
-        if (!req.user) {
-          throw new Error("Authentication failed");
-        }
-
-        await updateProfile(auth.currentUser, {
-          displayName: `${firstName} ${lastName}`,
-          photoURL: `https://api.dicebear.com/9.x/adventurer-neutral/svg`,
-        });
-
-        dispatch(login(req.user));
-        toast.success(`Welcome, ${firstName}!`);
-      } catch (error) {
-        toast.error(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    signup(firstName, lastName, email, username, password);
+    await signup(firstName, lastName, email, username, password);
   };
 
-  const togglePassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPassword = () => {
+  const togglePassword = () => setShowPassword(!showPassword);
+  const toggleConfirmPassword = () =>
     setShowConfirmPassword(!showConfirmPassword);
-  };
 
   return (
     <main>
