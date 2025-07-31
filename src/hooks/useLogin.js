@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { login as _login } from "../app/features/userSlice";
-import { auth } from "../firebase/config";
+import { auth, db } from "../firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, updateDoc } from "firebase/firestore";
 
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +17,11 @@ export const useLogin = () => {
       if (!req.user) {
         throw new Error("Autification filed !");
       }
+
+      const user = doc(db, "users", auth.currentUser.uid);
+      await updateDoc(user, {
+        online: true,
+      });
 
       dispatch(_login(req.user));
       toast.success(`Welcome back`);

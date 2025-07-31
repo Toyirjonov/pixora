@@ -1,4 +1,5 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   createBrowserRouter,
   Navigate,
@@ -12,11 +13,19 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/config";
 import { login, authReady } from "./app/features/userSlice";
 
-import { useDispatch } from "react-redux";
-
 function App() {
   const { user, isAuthReady } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      dispatch(login(user));
+      dispatch(authReady());
+      console.log("Auth state changed:", user);
+    });
+
+    return () => unsubscribe();
+  }, [dispatch]);
 
   const routes = createBrowserRouter([
     {
@@ -50,12 +59,6 @@ function App() {
       element: user ? <Navigate to="/" /> : <Signup />,
     },
   ]);
-
-  onAuthStateChanged(auth, (user) => {
-    dispatch(login(user));
-    dispatch(authReady());
-    console.log(user);
-  });
 
   return <>{isAuthReady && <RouterProvider router={routes} />}</>;
 }

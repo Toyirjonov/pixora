@@ -15,7 +15,6 @@ function SignUp() {
     const firstName = formData.get("firstName");
     const lastName = formData.get("lastName");
     const email = formData.get("email");
-    const username = formData.get("username");
     const password = formData.get("password");
     const confirmPassword = formData.get("confirmPassword");
 
@@ -26,14 +25,10 @@ function SignUp() {
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Email formati noto'g'ri";
     }
-    if (!username.trim()) newErrors.username = "Username kiriting";
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      newErrors.username = "Username noto‘g‘ri formatda";
-    }
     if (!password.trim()) {
       newErrors.password = "Parolni kiriting";
-    } else if (password.length < 8) {
-      newErrors.password = "Parol kamida 8 ta belgidan iborat bo'lishi kerak!";
+    } else if (password.length < 6) {
+      newErrors.password = "Parol kamida 6 ta belgidan iborat bo'lishi kerak!";
     }
     if (!confirmPassword.trim()) {
       newErrors.confirmPassword = "Parolni tasdiqlang";
@@ -57,16 +52,14 @@ function SignUp() {
     const firstName = formData.get("firstName").trim();
     const lastName = formData.get("lastName").trim();
     const email = formData.get("email").trim().toLowerCase();
-    const username = formData.get("username").trim();
     const password = formData.get("password");
 
-    await signup(firstName, lastName, email, username, password);
+    await signup(firstName, lastName, email, password);
   };
 
   const togglePassword = () => setShowPassword(!showPassword);
   const toggleConfirmPassword = () =>
     setShowConfirmPassword(!showConfirmPassword);
-
   return (
     <main>
       <div className="min-h-screen flex">
