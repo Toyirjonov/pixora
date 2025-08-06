@@ -19,17 +19,14 @@ const UserList = () => {
               key={user.id}
               className="hover:bg-white/50 flex items-center gap-4 cursor-pointer p-4 border-b border-gray-200 transition-colors"
             >
-              <div className="relative flex-shrink-0">
-                <img
-                  src={user.photoURL}
-                  alt={user.displayName || "User"}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div
-                  className={`w-4 h-4 ${
-                    user.online ? "bg-green-500" : "bg-red-500"
-                  } absolute -bottom-1 -right-1 rounded-full border-2 border-white shadow-sm`}
-                />
+              <div
+                className={`avatar ${
+                  user.online ? "avatar-online" : "avatar-offline"
+                } flex-shrink-0`}
+              >
+                <div className="w-12 rounded-full">
+                  <img src={user.photoURL} alt={user.displayName || "User"} />
+                </div>
               </div>
 
               <div className="flex-1 min-w-0">
