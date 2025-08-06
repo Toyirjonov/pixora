@@ -8,7 +8,7 @@ const UserList = () => {
     <div className="flex flex-col h-screen w-80 border-l border-gray-300 bg-gray-100">
       <div className="bg-gray-200 border-b border-gray-300 py-4 px-4 flex-shrink-0">
         <h2 className="text-lg font-semibold text-gray-800 text-center">
-          Users list
+          User List
         </h2>
       </div>
 
@@ -21,10 +21,7 @@ const UserList = () => {
             >
               <div className="relative flex-shrink-0">
                 <img
-                  src={
-                    user.photoURL ||
-                    "https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=default"
-                  }
+                  src={user.photoURL}
                   alt={user.displayName || "User"}
                   className="w-12 h-12 rounded-full object-cover"
                 />
@@ -37,11 +34,11 @@ const UserList = () => {
 
               <div className="flex-1 min-w-0">
                 <h3 className="text-base font-semibold text-gray-800 truncate">
-                  {user.displayName || "Unknown User"}
+                  {user.displayName || "Noma'lum foydalanuvchi"}
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs text-gray-500">
                   {user.online ? (
-                    <span className="text-green-600 font-medium">online</span>
+                    <span className="text-green-600 font-medium">onlayn</span>
                   ) : (
                     <span className="text-gray-500">
                       {formatLastSeen(user.lastSeen)}

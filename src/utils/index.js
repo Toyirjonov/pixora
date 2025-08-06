@@ -1,4 +1,4 @@
-export function formatLastSeen(input) {
+export function formatLastSeen(input, showExactTime = false) {
   // Input mavjudligini tekshiramiz
   if (!input) return "ancha vaqt oldin onlayn bo'lgan";
 
@@ -25,24 +25,38 @@ export function formatLastSeen(input) {
   const diffHrs = Math.floor(diffMin / 60);
   const diffDays = Math.floor(diffHrs / 24);
 
-  // Vaqt farqiga qarab javob qaytaramiz
-  if (diffSec < 60) return "bir oz oldin onlayn edi";
-  if (diffMin < 60) return `${diffMin} daqiqa oldin onlayn bo'lgan`;
-  if (diffHrs < 24) return `${diffHrs} soat oldin onlayn bo'lgan`;
-  if (diffDays === 1)
-    return `kecha ${date.getHours().toString().padStart(2, "0")}:${date
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")} da onlayn bo'lgan`;
-  if (diffDays < 7) return `${diffDays} kun oldin onlayn bo'lgan`;
-
-  return `${date.getDate().toString().padStart(2, "0")}.${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}.${date.getFullYear()} ${date
-    .getHours()
-    .toString()
-    .padStart(2, "0")}:${date
+  // Aniq vaqt formati
+  const exactTime = `${date.getHours().toString().padStart(2, "0")}:${date
     .getMinutes()
     .toString()
-    .padStart(2, "0")} da onlayn bo'lgan`;
+    .padStart(2, "0")}`;
+
+  const exactDate = `${date.getDate().toString().padStart(2, "0")}.${(
+    date.getMonth() + 1
+  )
+    .toString()
+    .padStart(2, "0")}.${date.getFullYear()}`;
+
+  // Agar showExactTime true bo'lsa, doim aniq vaqtni ko'rsatamiz
+  if (showExactTime) {
+    if (diffDays === 0) {
+      return `bugun ${exactTime} da onlayn bo'lgan`;
+    } else if (diffDays === 1) {
+      return `kecha ${exactTime} da onlayn bo'lgan`;
+    } else {
+      return `${exactDate} ${exactTime} da onlayn bo'lgan`;
+    }
+  }
+
+  // Vaqt farqiga qarab javob qaytaramiz (eski versiya)
+  if (diffSec < 60) return "bir oz oldin onlayn edi";
+  if (diffMin < 60)
+    return `${diffMin} daqiqa oldin onlayn bo'lgan (${exactTime})`;
+  if (diffHrs < 24)
+    return `${diffHrs} soat oldin onlayn bo'lgan (${exactTime})`;
+  if (diffDays === 1) return `kecha ${exactTime} da onlayn bo'lgan`;
+  if (diffDays < 7)
+    return `${diffDays} kun oldin onlayn bo'lgan (${exactTime})`;
+
+  return `${exactDate} ${exactTime} da onlayn bo'lgan`;
 }
