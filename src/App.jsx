@@ -12,13 +12,10 @@ import { Home, Login, Profile, Signup, SingleImage } from "./pages";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/config";
 import { login, authReady } from "./app/features/userSlice";
-import { useActivity } from "./hooks/useActivity";
 
 function App() {
   const { user, isAuthReady } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
-  useActivity();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
