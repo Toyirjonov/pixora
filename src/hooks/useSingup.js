@@ -37,6 +37,7 @@ export const useSignup = () => {
         displayName: `${firstName} ${lastName}`,
         uid: res.user.uid,
         createdAt: new Date().toISOString(),
+        lastSeen: serverTimestamp(),
       });
 
       dispatch(

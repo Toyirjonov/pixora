@@ -1,4 +1,5 @@
 import { useCollection } from "../hooks/useCollection";
+import { formatLastSeen } from "../utils/index";
 
 const UserList = () => {
   const { data: users } = useCollection("users");
@@ -35,12 +36,14 @@ const UserList = () => {
                 <h3 className="text-base font-semibold text-gray-800 truncate">
                   {user.displayName}
                 </h3>
-                <p
-                  className={`text-sm font-medium ${
-                    user.online ? "text-green-600" : "text-red-500"
-                  }`}
-                >
-                  {user.online ? "Online" : "Offline"}
+                <p className="text-sm text-gray-500">
+                  {user.online ? (
+                    <span className="text-green-600 font-medium">online</span>
+                  ) : (
+                    <span className="text-gray-500">
+                      {formatLastSeen(user.lastSeen)}
+                    </span>
+                  )}
                 </p>
               </div>
             </div>

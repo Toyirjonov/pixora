@@ -5,7 +5,7 @@ import { signOut } from "firebase/auth";
 import { logOut } from "../app/features/userSlice";
 import toast from "react-hot-toast";
 import { db } from "../firebase/config";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
 
 export const useLogout = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,9 +17,10 @@ export const useLogout = () => {
       const user = doc(db, "users", auth.currentUser.uid);
       await updateDoc(user, {
         online: false,
+        lastSeen: serverTimestamp(),
       });
       await signOut(auth);
-      dispatch(logOut);
+      dispatch(logOut());
       toast.success("Ko'rishguncha!");
     } catch (error) {
       console.error("Logout error:", error);

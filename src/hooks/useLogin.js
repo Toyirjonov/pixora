@@ -21,6 +21,7 @@ export const useLogin = () => {
       const user = doc(db, "users", auth.currentUser.uid);
       await updateDoc(user, {
         online: true,
+        lastSeen: serverTimestamp(),
       });
 
       dispatch(_login(req.user));
