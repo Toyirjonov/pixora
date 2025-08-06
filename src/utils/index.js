@@ -1,16 +1,21 @@
 export function formatLastSeen(input) {
-  if (input.length == 0) return;
+  // Input mavjudligini tekshiramiz
+  if (!input) return "ancha vaqt oldin onlayn bo'lgan";
+
   let date;
 
-  // Firebase Timestamp bo‘lsa
+  // Firebase Timestamp bo'lsa
   if (input?.seconds !== undefined && input?.nanoseconds !== undefined) {
     date = new Date(input.seconds * 1000 + Math.floor(input.nanoseconds / 1e6));
   } else if (input instanceof Date) {
     date = input;
   } else {
-    throw new Error(
-      "Noto‘g‘ri format: Date yoki Firebase Timestamp bo‘lishi kerak"
-    );
+    return "ancha vaqt oldin onlayn bo'lgan";
+  }
+
+  // Sananing to'g'riligini tekshiramiz
+  if (isNaN(date.getTime())) {
+    return "ancha vaqt oldin onlayn bo'lgan";
   }
 
   const now = new Date();
@@ -20,16 +25,16 @@ export function formatLastSeen(input) {
   const diffHrs = Math.floor(diffMin / 60);
   const diffDays = Math.floor(diffHrs / 24);
 
-  // 🔥 Faqatgina bir soniyaga ham farq qilsa
-  if (diffSec < 60) return "bir oz oldin online edi";
-  if (diffMin < 60) return `${diffMin} daqiqa oldin online bo'lgan`;
-  if (diffHrs < 24) return `${diffHrs} soat oldin online bo'lgan`;
+  // Vaqt farqiga qarab javob qaytaramiz
+  if (diffSec < 60) return "bir oz oldin onlayn edi";
+  if (diffMin < 60) return `${diffMin} daqiqa oldin onlayn bo'lgan`;
+  if (diffHrs < 24) return `${diffHrs} soat oldin onlayn bo'lgan`;
   if (diffDays === 1)
     return `kecha ${date.getHours().toString().padStart(2, "0")}:${date
       .getMinutes()
       .toString()
-      .padStart(2, "0")} da online bo'lgan`;
-  if (diffDays < 7) return `${diffDays} kun oldin online bo'lgan`;
+      .padStart(2, "0")} da onlayn bo'lgan`;
+  if (diffDays < 7) return `${diffDays} kun oldin onlayn bo'lgan`;
 
   return `${date.getDate().toString().padStart(2, "0")}.${(date.getMonth() + 1)
     .toString()
@@ -39,5 +44,5 @@ export function formatLastSeen(input) {
     .padStart(2, "0")}:${date
     .getMinutes()
     .toString()
-    .padStart(2, "0")} da online bo'lgan`;
+    .padStart(2, "0")} da onlayn bo'lgan`;
 }

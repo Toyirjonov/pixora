@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import { login } from "../app/features/userSlice";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 
 export const useSignup = () => {

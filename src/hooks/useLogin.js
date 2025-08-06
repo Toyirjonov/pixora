@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { login as _login } from "../app/features/userSlice";
 import { auth, db } from "../firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
 
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);

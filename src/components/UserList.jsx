@@ -21,8 +21,11 @@ const UserList = () => {
             >
               <div className="relative flex-shrink-0">
                 <img
-                  src={user.photoURL}
-                  alt={user.displayName}
+                  src={
+                    user.photoURL ||
+                    "https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=default"
+                  }
+                  alt={user.displayName || "User"}
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div
@@ -34,7 +37,7 @@ const UserList = () => {
 
               <div className="flex-1 min-w-0">
                 <h3 className="text-base font-semibold text-gray-800 truncate">
-                  {user.displayName}
+                  {user.displayName || "Unknown User"}
                 </h3>
                 <p className="text-sm text-gray-500">
                   {user.online ? (
